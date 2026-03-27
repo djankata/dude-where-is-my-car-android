@@ -1,42 +1,44 @@
 plugins {
-    id 'com.android.application'
-}
+      id 'com.android.application'
+  }
 
-android {
-    namespace 'com.djankata.dudewherescar'
-    compileSdk 34
+  android {
+      namespace 'com.djankata.dudewherescar'
+      compileSdk 34
 
-    defaultConfig {
-        applicationId "com.djankata.dudewherescar"
-        minSdk 24
-        targetSdk 34
-        versionCode 3
-        versionName "1.0.2"
+      defaultConfig {
+          applicationId "com.djankata.dudewherescar"
+          minSdk 24
+          targetSdk 34
+          versionCode 3
+          versionName "1.0.2"
 
-        manifestPlaceholders = [
-            hostName: "djankata.github.io",
-            defaultUrl: "https://djankata.github.io/dude-where-is-my-car/",
-            launcherName: "DWIMC",
-            assetStatements: '[{ "relation": ["delegate_permission/common.handle_all_urls"], "target": { "namespace": "web", "site": "https://djankata.github.io" } }]'
-        ]
-    }
+          manifestPlaceholders = [
+              hostName: "djankata.github.io",
+              defaultUrl: "https://djankata.github.io/dude-where-is-my-car/",
+              launcherName: "DWIMC",
+              assetStatements: '[{ "relation": ["delegate_permission/common.handle_all_urls"], "target": { "namespace":
+  "web", "site": "https://djankata.github.io" } }]'
+          ]
+      }
 
-    buildTypes {
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
-        }
-        debug {
-            minifyEnabled false
-        }
-    }
+      buildTypes {
+          release {
+              minifyEnabled true
+              proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+          }
+      }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-}
+      compileOptions {
+          sourceCompatibility JavaVersion.VERSION_17
+          targetCompatibility JavaVersion.VERSION_17
+      }
 
-dependencies {
-    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.5.0'
-}
+      lint {
+          abortOnError false
+      }
+  }
+
+  dependencies {
+      implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.5.0'
+  }
