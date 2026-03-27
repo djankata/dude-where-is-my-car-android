@@ -23,8 +23,14 @@ jobs:
       - name: Copy icon
         run: mkdir -p app/src/main/res/mipmap-xxxhdpi && cp icon-512.png app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
 
+      - name: Set up Gradle wrapper
+        uses: gradle/actions/setup-gradle@v4
+
       - name: Generate Gradle wrapper
-        run: gradle wrapper --gradle-version 8.5 && chmod +x gradlew
+        run: gradle wrapper --gradle-version 8.5
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
 
       - name: Generate signing key
         run: keytool -genkeypair -v -keystore keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias dwimc -storepass android123 -keypass android123 -dname "CN=DWIMC, OU=App, O=djankata, L=Sofia, C=BG"
