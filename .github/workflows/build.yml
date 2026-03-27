@@ -1,17 +1,15 @@
-name: Build Android APK & AAB
+name: Build Android APK
 
-  on:
-    push:
-      branches: [ main ]
-    workflow_dispatch:
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
 
-  jobs:
-    build:
-      runs-on: ubuntu-latest
-
-      steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -23,50 +21,22 @@ name: Build Android APK & AAB
         uses: android-actions/setup-android@v3
 
       - name: Copy icon
-        run: |
-          mkdir -p app/src/main/res/mipmap-xxxhdpi
-          if [ -f icon-512.png ]; then
-            cp icon-512.png app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
-          fi
+        run: mkdir -p app/src/main/res/mipmap-xxxhdpi && cp icon-512.png app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
 
-      - name: Make gradlew executable
-        run: |
-          if [ ! -f gradlew ]; then
-            gradle wrapper --gradle-version 8.5
-          fi
-          chmod +x gradlew
+      - name: Generate Gradle wrapper
+        run: gradle wrapper --gradle-version 8.5 && chmod +x gradlew
 
       - name: Generate signing key
-        run: |
-          keytool -genkeypair -v \
-            -keystore keystore.jks \
-            -keyalg RSA -keysize 2048 \
-            -validity 10000 \
-            -alias dwimc \
-            -storepass android123 \
-            -keypass android123 \
-            -dname "CN=Dude Where Is My Car, OU=App, O=djankata, L=Sofia, ST=Sofia, C=BG"
+        run: keytool -genkeypair -v -keystore keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias dwimc -storepass android123 -keypass android123 -dname "CN=DWIMC, OU=App, O=djankata, L=Sofia, C=BG"
 
       - name: Build debug APK
         run: ./gradlew assembleDebug --no-daemon
 
       - name: Build release APK
-        run: |
-          ./gradlew assembleRelease \
-            -Pandroid.injected.signing.store.file=${{ github.workspace }}/keystore.jks \
-            -Pandroid.injected.signing.store.password=android123 \
-            -Pandroid.injected.signing.key.alias=dwimc \
-            -Pandroid.injected.signing.key.password=android123 \
-            --no-daemon
+        run: ./gradlew assembleRelease -Pandroid.injected.signing.store.file=${{ github.workspace }}/keystore.jks -Pandroid.injected.signing.store.password=android123 -Pandroid.injected.signing.key.alias=dwimc -Pandroid.injected.signing.key.password=android123 --no-daemon
 
       - name: Build release AAB
-        run: |
-          ./gradlew bundleRelease \
-            -Pandroid.injected.signing.store.file=${{ github.workspace }}/keystore.jks \
-            -Pandroid.injected.signing.store.password=android123 \
-            -Pandroid.injected.signing.key.alias=dwimc \
-            -Pandroid.injected.signing.key.password=android123 \
-            --no-daemon
+        run: ./gradlew bundleRelease -Pandroid.injected.signing.store.file=${{ github.workspace }}/keystore.jks -Pandroid.injected.signing.store.password=android123 -Pandroid.injected.signing.key.alias=dwimc -Pandroid.injected.signing.key.password=android123 --no-daemon
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
